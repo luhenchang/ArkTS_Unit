@@ -40,7 +40,7 @@ struct HomePage {
        this.currentIndex = index
     })
   }
-  colors = ['#E67C92', '#ff7ce6a6', '#ff7ccde6', '#ff160f10']
+  colors = ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']
   @Builder
   TabBottomBackgroundCanvas() {
     Column() {
@@ -149,6 +149,7 @@ build() {
       this.currentIndex = index
       this.draw()
     })
+    .backgroundColor(this.colors[this.currentIndex])
     .background(this.TabBottomBackgroundCanvas(), { align: Alignment.Center })
     .width('100%')
     .height('100%')
