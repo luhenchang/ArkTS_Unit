@@ -7,7 +7,7 @@ import { HomeStyles } from '../component/styles/HomeStyles';
 // xxx.ets
 @Entry
 @Component
-struct HomePage {
+struct MainPage {
   @State @Watch('selectedIndex') currentIndex: number = 0
   private controller: TabsController = new TabsController()
 

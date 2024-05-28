@@ -2,7 +2,7 @@
   "src": [
     "pages/custom/CanvasPage",
     "pages/custom/CanvasDemoPage",
-    "pages/HomePage",
+    "pages/MainPage",
     "pages/custom/CustomTabBoBottomBgPage"
   ]
 }
