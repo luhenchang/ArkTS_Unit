@@ -1,7 +1,7 @@
 {
   "src": [
-    "pages/CanvasPage",
-    "pages/CanvasDemoPage",
+    "pages/custom/CanvasPage",
+    "pages/custom/CanvasDemoPage",
     "pages/HomePage",
     "pages/custom/CustomTabBoBottomBgPage"
   ]

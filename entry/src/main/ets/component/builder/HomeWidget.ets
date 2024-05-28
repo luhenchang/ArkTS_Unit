@@ -1,5 +1,5 @@
-import { TabContentModel } from '../data/model/TabContentModel'
-import { CanvasPage } from './CanvasPage'
+import { TabContentModel } from '../../data/model/TabContentModel'
+import { CanvasPage } from '../../pages/custom/CanvasPage'
 
 let fontColor: string = '#182431'
 let selectedFontColor: string = '#1196db'

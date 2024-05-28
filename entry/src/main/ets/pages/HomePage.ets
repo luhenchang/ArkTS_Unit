@@ -1,6 +1,6 @@
 //@Entry
 import { tabContentList, TabContentModel } from '../data/model/TabContentModel';
-import { tabContentBuilder } from './HomeWidget';
+import { tabContentBuilder } from '../component/builder/HomeWidget';
 
 
 // xxx.ets

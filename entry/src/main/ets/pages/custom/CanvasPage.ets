@@ -1,6 +1,6 @@
 import { List } from '@kit.ArkTS'
 import { when } from '@ohos/hypium'
-import { dataList } from '../data/model/CirclePieChartMaxBean'
+import { dataList } from '../../data/model/CirclePieChartMaxBean'
 
 
 @Entry

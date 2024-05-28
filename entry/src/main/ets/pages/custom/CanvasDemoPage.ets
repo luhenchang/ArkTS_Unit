@@ -1,4 +1,4 @@
-import { CirclePieChartMaxBean, dataList } from '../data/model/CirclePieChartMaxBean'
+import { CirclePieChartMaxBean, dataList } from '../../data/model/CirclePieChartMaxBean'
 
 
 @Entry
