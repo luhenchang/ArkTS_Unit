@@ -1,52 +1,98 @@
 import { ArticleItem, ArticleModel } from '../../data/model/ArticleModel';
 import HarmonyViewModel from '../../pages/viewmodel/HarmonyViewModel';
+import {
+  closeLoadMore,
+  closeRefresh,
+  CustomRefreshLoadLayout,
+  listTouchEvent,
+  NoMoreLayout,
+  PullRefreshModel
+} from '../pullrefresh/PullRefreshExport'
+import { PageState } from '../pullrefresh/PullRefreshConstant'
 
 @Component
 export struct HomeComponent {
   @State articleList: ArticleItem[] = [];
+  // 需绑定列表或宫格组件
+  private scroller: Scroller = new Scroller();
+  @State dataModel: PullRefreshModel = new PullRefreshModel()
   @State isLoading: boolean = true
+  @State showFakeHead: boolean = true
 
   aboutToAppear(): void {
-    this.loadArticleInfo();
+    this.loadArticleInfo(false);
   }
 
-  private loadArticleInfo() {
+  private loadArticleInfo(isLoadMore: boolean) {
+    HarmonyViewModel.pageIndex = this.dataModel.currentPage
     HarmonyViewModel.requestData().then(articleModel => {
-      this.articleList = this.articleList.concat(articleModel.data.datas)
-      this.isLoading = false
+      // 模拟网络请求操作，请求网络2秒后得到数据，通知组件，变更列表数据
+      this.dataModel.pageState = PageState.Success;
+      //这里pageCount表示公共的页面数据。当请求次数小于总的页面次数表示可以继续加载
+      if (this.dataModel.currentPage < articleModel.data.pageCount) {
+        this.dataModel.currentPage++;
+        this.dataModel.hasMore = true;
+      } else {
+        this.dataModel.hasMore = false;
+      }
+      //表示还有数据，可以继续加载更多
+      if (isLoadMore) {
+        this.articleList = this.articleList.concat(articleModel.data.datas)
+        closeLoadMore(this.dataModel)
+      } else {//表示第一次请求
+        this.articleList = articleModel.data.datas
+        closeRefresh(this.dataModel, true)
+      }
+      this.dataModel.dataSize = this.articleList.length
     })
   }
 
   build() {
-    // HelloComponent自定义组件组合系统组件Row和Text
-    List({ space: 20, initialIndex: 0 }) {
-      ForEach(this.articleList, (data: ArticleItem) => {
+    Column() {
+      // 列表首条 Item
+      CustomRefreshLoadLayout({ config: this.dataModel.refreshLayoutConfig })
+
+      List({ scroller: this.scroller }) {
+        ForEach(this.articleList, (data: ArticleItem) => {
+          ListItem() {
+            Text('' + data.title)
+              .width('100%')
+              .height(100)
+              .fontSize(16)
+              .textAlign(TextAlign.Center)
+              .borderRadius(10)
+              .backgroundColor(0xFFFFFF)
+          }
+        })
+        // 列表末条 Item
         ListItem() {
-          Text('' + data.title)
-            .width('100%')
-            .height(100)
-            .fontSize(16)
-            .textAlign(TextAlign.Center)
-            .borderRadius(10)
-            .backgroundColor(0xFFFFFF)
+          if (this.dataModel.hasMore) {
+            CustomRefreshLoadLayout({ config: this.dataModel.loadMoreLayoutConfig })
+          } else {
+            NoMoreLayout()
+          }
+        }
+      }
+      .listDirection(Axis.Vertical) // 排列方向
+      .onTouch((event: TouchEvent | undefined) => {
+        if (event) {
+          if (this.dataModel.pageState === PageState.Success) {
+            console.log("listTouchEvent=", this.dataModel.pageState)
+            listTouchEvent(this.dataModel, event, (isLoadMore: boolean) => {
+              console.log("loadArticleInfo=", isLoadMore)
+              this.loadArticleInfo(isLoadMore)
+            });
+          }
         }
       })
+      .onScrollIndex((start: number, end: number) => {
+        console.log(`headfloat start:${start}`)
+        this.dataModel.startIndex = start;
+        this.dataModel.endIndex = end;
+      })
+      .scrollBar(BarState.Off)
+      .backgroundColor('#E5E5E5')
+      .edgeEffect(EdgeEffect.None) // 必须设置列表为滑动到边缘无效果
     }
-    .listDirection(Axis.Vertical) // 排列方向
-    .divider({ strokeWidth: 2, color: 0xFFFFFF, startMargin: 20, endMargin: 20 }) // 每行之间的分界线
-    .edgeEffect(EdgeEffect.Spring) // 滑动到边缘无效果
-    .onScrollIndex((firstIndex: number, lastIndex: number) => {
-      console.info('first' + firstIndex)
-      console.info('last' + lastIndex)
-    })
-    .onReachEnd(() => {
-      if (!this.isLoading) {
-        this.isLoading = true
-        HarmonyViewModel.pageIndex++
-        this.loadArticleInfo()
-      }
-
-    })
-    .width('100%')
   }
 }
